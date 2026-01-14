@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Guardias - USUARIO - Expert Cell</title>
+    <style>
+        :root {
+            --expert-blue: #1e3a8a;
+            --expert-light-blue: #3b82f6;
+            --expert-green: #10b981;
+            --expert-gray: #6b7280;
+            --expert-light-gray: #f3f4f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--expert-blue), var(--expert-light-blue));
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .user-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--expert-green);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-section {
+            background: var(--expert-light-gray);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid var(--expert-blue);
+            height: fit-content;
+        }
+        
+        .calendar-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .user-guardias-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--expert-light-gray);
+        }
+        
+        .section-header h3 {
+            color: var(--expert-blue);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--expert-blue);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--expert-light-blue);
+        }
+        
+        .btn {
+            background: var(--expert-blue);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: var(--expert-light-blue);
+        }
+        
+        .guardia-type {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid var(--expert-green);
+            text-align: center;
+            font-weight: 600;
+            color: var(--expert-green);
+            margin-bottom: 20px;
+        }
+        
+        .weekend-info {
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--expert-light-blue);
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .weekend-info strong {
+            color: var(--expert-blue);
+        }
+        
+        .paired-date {
+            display: inline-block;
+            background: var(--expert-green);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        .instructions {
+            background: #e0f2fe;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid var(--expert-light-blue);
+        }
+        
+        .instructions h4 {
+            color: var(--expert-blue);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ef4444;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .availability-check {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .availability-check.ocupada {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .availability-check.disponible {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        /* ESTILOS DEL CALENDARIO */
+        .calendar-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-controls button {
+            background: var(--expert-blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .calendar-controls button:hover {
+            background: var(--expert-light-blue);
+        }
+        
+        .current-month {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--expert-blue);
+            min-width: 200px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .simple-calendar {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: var(--expert-light-gray);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+        
+        .weekday {
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--expert-blue);
+            border-right: 1px solid #e5e7eb;
+        }
+        
+        .weekday:last-child {
+            border-right: none;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: 70px;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+        
+        .calendar-day {
+            padding: 8px;
+            border-right: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            position: relative;
+            min-height: 70px;
+        }
+        
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+        
+        .calendar-day.empty {
+            background: #f9fafb;
+        }
+        
+        .calendar-day.weekend {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .calendar-day.occupied {
+            background: #fef3c7 !important;
+            border: 2px solid #fbbf24 !important;
+        }
+        
+        .calendar-day.available {
+            background: #d1fae5 !important;
+            border: 2px solid #10b981 !important;
+        }
+        
+        .calendar-day.today {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--expert-green);
+        }
+        
+        .day-number {
+            font-weight: 600;
+            color: var(--expert-blue);
+            font-size: 0.9rem;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        
+        .day-events {
+            margin-top: 20px;
+            max-height: 40px;
+            overflow-y: auto;
+        }
+        
+        .calendar-event {
+            font-size: 0.7rem;
+            padding: 2px 4px;
+            margin-bottom: 2px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .event-pendiente { background: #fbbf24; }
+        .event-confirmado { background: #10b981; }
+        .event-completado { background: #3b82f6; }
+        .event-cancelado { background: #ef4444; }
+        
+        /* Estilos para listado de guardias */
+        .user-guardias-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .user-guardia-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 4px solid var(--expert-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-guardia-item.pendiente { border-left-color: #fbbf24; }
+        .user-guardia-item.confirmado { border-left-color: #10b981; }
+        .user-guardia-item.completado { border-left-color: #3b82f6; }
+        .user-guardia-item.cancelado { border-left-color: #ef4444; }
+        
+        .guardia-info {
+            flex-grow: 1;
+        }
+        
+        .guardia-fecha {
+            font-weight: 600;
+            color: var(--expert-blue);
+            margin-bottom: 5px;
+        }
+        
+        .guardia-estado {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        .estado-pendiente { background: #fef3c7; color: #92400e; }
+        .estado-confirmado { background: #d1fae5; color: #065f46; }
+        .estado-completado { background: #dbeafe; color: #1e40af; }
+        .estado-cancelado { background: #fee2e2; color: #991b1b; }
+        
+        .guardia-observaciones {
+            font-size: 0.85rem;
+            color: var(--expert-gray);
+            margin-top: 4px;
+            font-style: italic;
+        }
+        
+        .no-guardias-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--expert-gray);
+        }
+        
+        .no-guardias-message .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .status-pendiente { background-color: #fbbf24; }
+        .status-confirmado { background-color: #10b981; }
+        .status-completado { background-color: #3b82f6; }
+        .status-cancelado { background-color: #ef4444; }
+        
+        .current-user-display {
+            font-size: 1.1rem;
+            color: var(--expert-green);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border-left: 4px solid var(--expert-green);
+        }
+        
+        .admin-link {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border: 1px dashed var(--expert-light-blue);
+        }
+        
+        .admin-link a {
+            color: var(--expert-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .admin-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .sync-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--expert-green);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            font-weight: 500;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="syncNotification" class="sync-notification">
+        🔄 Datos actualizados
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="user-badge">VERSIÓN USUARIO</div>
+            <h1>🏢 Control de Guardias - Expert Cell</h1>
+            <p class="subtitle">Sistema de registro de guardias para fines de semana - Día completo</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- FORMULARIO DE REGISTRO -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>📋 Registrar Nueva Guardia</h3>
+                </div>
+                
+                <div class="guardia-type">
+                    🕐 GUARDIA DE FIN DE SEMANA COMPLETO
+                </div>
+                
+                <div id="weekendInfo" class="weekend-info">
+                    <!-- Se llenará dinámicamente con JavaScript -->
+                </div>
+                
+                <div id="errorMessage" class="error-message">
+                    <!-- Mensajes de error se mostrarán aquí -->
+                </div>
+                
+                <div id="availabilityCheck" class="availability-check">
+                    <!-- Verificación de disponibilidad se mostrará aquí -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="nombre">Seleccionar Personal:</label>
+                    <select id="nombre" onchange="actualizarTelefono(); verificarDisponibilidad()">
+                        <option value="">-- Selecciona tu nombre --</option>
+                        <option value="Luis Alejandro Cervantes" data-telefono="222 772 5899">Luis Alejandro Cervantes - 222 772 5899</option>
+                        <option value="Manuel Sánchez" data-telefono="229 919 5588">Manuel Sánchez - 229 919 5588</option>
+                        <option value="Héctor García" data-telefono="222 317 7482">Héctor García - 222 317 7482</option>
+                        <option value="Luis Martínez" data-telefono="81 1013 8334">Luis Martínez - 81 1013 8334</option>
+                        <option value="Augusto Olvera" data-telefono="222 377 8960">Augusto Olvera - 222 377 8960</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" placeholder="Selecciona tu nombre primero" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha">Fecha de Guardia:</label>
+                    <input type="date" id="fecha" onchange="actualizarInfoFinSemana(); verificarDisponibilidad()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="comentarios">Observaciones / Notas:</label>
+                    <input type="text" id="comentarios" placeholder="Ej: Cubre por emergencia, etc.">
+                </div>
+                
+                <button class="btn" onclick="agregarGuardia()">
+                    ➕ Registrar Guardia de Fin de Semana
+                </button>
+                
+                <div class="instructions">
+                    <h4>📝 Instrucciones para Usuarios:</h4>
+                    <ul>
+                        <li>Solo puedes registrar guardias para <strong>sábados y domingos</strong></li>
+                        <li>Al registrar un sábado, <strong>automáticamente se registra el domingo</strong></li>
+                        <li>Al registrar un domingo, <strong>automáticamente se registra el sábado</strong></li>
+                        <li>La guardia es de <strong>día completo</strong> (24 horas cada día)</li>
+                        <li><strong>NO</strong> se puede asignar más de una persona al mismo fin de semana</li>
+                        <li>Para cambios o cancelaciones, contacta al administrador</li>
+                    </ul>
+                </div>
+                
+                <div class="admin-link">
+                    <p>¿Eres administrador? <a href="control_guardias_admin.html">Acceder a versión ADMIN</a></p>
+                </div>
+            </div>
+            
+            <!-- CALENDARIO -->
+            <div class="calendar-section">
+                <div class="section-header">
+                    <h3>📅 Calendario de Guardias</h3>
+                </div>
+                
+                <div class="calendar-controls">
+                    <button onclick="cambiarMes(-1)">◀</button>
+                    <div class="current-month" id="currentMonth">Enero 2024</div>
+                    <button onclick="cambiarMes(1)">▶</button>
+                </div>
+                
+                <div id="simpleCalendar"></div>
+                
+                <div class="legend">
+                    <h4>Leyenda:</h4>
+                    <div class="legend-item">
+                        <div class="legend-color status-pendiente"></div>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color status-confirmado"></div>
+                        <span>Confirmado</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color status-completado"></div>
+                        <span>Completado</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color status-cancelado"></div>
+                        <span>Cancelado</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MIS GUARDIAS REGISTRADAS -->
+            <div class="user-guardias-section">
+                <div class="section-header">
+                    <h3>📅 Mis Guardias Registradas</h3>
+                </div>
+                
+                <div id="currentUserDisplay" class="current-user-display" style="display: none;">
+                    <!-- Se mostrará el usuario actual -->
+                </div>
+                
+                <div id="userActivity">
+                    <div class="no-guardias-message">
+                        <div class="icon">👤</div>
+                        <p>Selecciona tu nombre en el formulario para ver tus guardias</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 0.9rem; color: var(--expert-gray); text-align: center;">
+                    <p><strong>Nota:</strong> Solo puedes ver y registrar guardias. Para modificaciones contacta al administrador.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Variables globales
+        let guardias = JSON.parse(localStorage.getItem('expertCellGuardias')) || [];
+        let mesActual = new Date().getMonth();
+        let añoActual = new Date().getFullYear();
+        let usuarioSeleccionado = '';
+        let lastSyncData = JSON.stringify(guardias);
+        
+        // Función para mostrar notificación de sincronización
+        function mostrarNotificacionSync() {
+            const notification = document.getElementById('syncNotification');
+            notification.style.display = 'block';
+            notification.style.animation = 'none';
+            void notification.offsetWidth; // Trigger reflow
+            notification.style.animation = 'fadeInOut 3s ease-in-out';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Configuración inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Iniciando versión USUARIO...');
+            
+            // Cargar guardias
+            cargarGuardias();
+            lastSyncData = JSON.stringify(guardias);
+            
+            // Configurar fecha mínima para hoy
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').min = hoy;
+            
+            // Escuchar cambios en el select de nombre
+            document.getElementById('nombre').addEventListener('change', function() {
+                actualizarTelefono();
+                verificarDisponibilidad();
+                actualizarVistaUsuario();
+            });
+            
+            // Escuchar cambios en el campo de fecha
+            document.getElementById('fecha').addEventListener('change', function() {
+                actualizarInfoFinSemana();
+                verificarDisponibilidad();
+            });
+            
+            // Generar calendario inicial
+            generarCalendario();
+            
+            // Configurar sincronización
+            configurarSincronizacion();
+            
+            console.log('Versión USUARIO lista');
+        });
+        
+        // Configurar sistema de sincronización
+        function configurarSincronizacion() {
+            // 1. Sincronización con Storage Events (para diferentes pestañas/ventanas)
+            window.addEventListener('storage', function(e) {
+                console.log('Storage event detected:', e.key);
+                
+                if (e.key === 'expertCellGuardias') {
+                    sincronizarDatos();
+                }
+            });
+            
+            // 2. Sincronización periódica (para misma pestaña o fallback)
+            setInterval(function() {
+                const datosStorage = localStorage.getItem('expertCellGuardias');
+                
+                if (lastSyncData !== datosStorage) {
+                    console.log('Cambios detectados en localStorage, sincronizando...');
+                    sincronizarDatos();
+                }
+            }, 1000); // Verificar cada segundo
+        }
+        
+        // Función para sincronizar datos
+        function sincronizarDatos() {
+            // Guardar estado anterior
+            const datosAnteriores = JSON.stringify(guardias);
+            
+            // Recargar datos
+            cargarGuardias();
+            lastSyncData = JSON.stringify(guardias);
+            
+            // Solo actualizar si realmente hay cambios
+            if (datosAnteriores !== lastSyncData) {
+                // Actualizar calendario
+                generarCalendario();
+                
+                // Actualizar vista del usuario si está seleccionado
+                if (usuarioSeleccionado) {
+                    mostrarGuardiasUsuario(usuarioSeleccionado);
+                }
+                
+                // Mostrar notificación
+                mostrarNotificacionSync();
+                
+                console.log('Datos sincronizados correctamente');
+            }
+        }
+        
+        // Función para actualizar la vista del usuario
+        function actualizarVistaUsuario() {
+            const selectNombre = document.getElementById('nombre');
+            const nombre = selectNombre.value.trim();
+            const userDisplay = document.getElementById('currentUserDisplay');
+            
+            if (nombre) {
+                usuarioSeleccionado = nombre;
+                userDisplay.innerHTML = `👤 ${nombre}`;
+                userDisplay.style.display = 'block';
+                
+                // Mostrar guardias del usuario
+                mostrarGuardiasUsuario(nombre);
+            } else {
+                usuarioSeleccionado = '';
+                userDisplay.style.display = 'none';
+                mostrarMensajeInicial();
+            }
+        }
+        
+        // Función para verificar disponibilidad de fechas
+        function verificarDisponibilidad() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            const availabilityCheck = document.getElementById('availabilityCheck');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Ocultar mensajes previos
+            availabilityCheck.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Si no hay fecha seleccionada, no hacer nada
+            if (!fecha) return;
+            
+            // Validar que sea sábado o domingo
+            const [year, month, day] = fecha.split('-').map(Number);
+            const fechaObj = new Date(year, month - 1, day);
+            const dia = fechaObj.getDay();
+            
+            if (dia !== 6 && dia !== 0) {
+                return; // No es fin de semana
+            }
+            
+            // Calcular fecha pareada
+            const fechaPareada = calcularFechaPareada(fecha);
+            
+            // Verificar si ya existe alguien asignado a estas fechas
+            const fechasParaVerificar = [fecha, fechaPareada];
+            let fechasOcupadas = [];
+            let personasAsignadas = [];
+            
+            fechasParaVerificar.forEach(fechaStr => {
+                const guardiasExistentes = guardias.filter(g => 
+                    g.fecha === fechaStr && 
+                    g.estado !== 'cancelado'
+                );
+                
+                if (guardiasExistentes.length > 0) {
+                    fechasOcupadas.push(fechaStr);
+                    guardiasExistentes.forEach(g => {
+                        if (!personasAsignadas.includes(g.nombre)) {
+                            personasAsignadas.push(g.nombre);
+                        }
+                    });
+                }
+            });
+            
+            // Mostrar resultado de la verificación
+            if (fechasOcupadas.length > 0) {
+                const fechaFormateadaOcupada = formatFecha(fechasOcupadas[0]);
+                availabilityCheck.innerHTML = `
+                    <strong>⚠️ FIN DE SEMANA OCUPADO</strong><br>
+                    Fecha: <strong>${fechaFormateadaOcupada}</strong><br>
+                    Persona asignada: <strong>${personasAsignadas.join(', ')}</strong><br>
+                    <small>No se puede asignar otra persona al mismo fin de semana</small>
+                `;
+                availabilityCheck.className = 'availability-check ocupada';
+                availabilityCheck.style.display = 'block';
+            } else {
+                const fechaFormateada = formatFecha(fecha);
+                const fechaPareadaFormateada = formatFecha(fechaPareada);
+                availabilityCheck.innerHTML = `
+                    <strong>✅ FIN DE SEMANA DISPONIBLE</strong><br>
+                    Fechas: <strong>${fechaFormateada} y ${fechaPareadaFormateada}</strong><br>
+                    <small>Puedes proceder con el registro</small>
+                `;
+                availabilityCheck.className = 'availability-check disponible';
+                availabilityCheck.style.display = 'block';
+            }
+        }
+        
+        // Función para actualizar el teléfono automáticamente
+        function actualizarTelefono() {
+            const selectNombre = document.getElementById('nombre');
+            const inputTelefono = document.getElementById('telefono');
+            const opcionSeleccionada = selectNombre.options[selectNombre.selectedIndex];
+            
+            if (opcionSeleccionada.value) {
+                const telefono = opcionSeleccionada.getAttribute('data-telefono');
+                inputTelefono.value = telefono;
+            } else {
+                inputTelefono.value = '';
+            }
+        }
+        
+        // Función para calcular la fecha pareada
+        function calcularFechaPareada(fechaStr) {
+            const [year, month, day] = fechaStr.split('-').map(Number);
+            const fecha = new Date(year, month - 1, day);
+            const diaSemana = fecha.getDay(); // 0=Domingo, 6=Sábado
+            
+            let fechaPareada = new Date(fecha);
+            
+            if (diaSemana === 6) { // Sábado
+                fechaPareada.setDate(fecha.getDate() + 1); // Domingo siguiente
+            } else if (diaSemana === 0) { // Domingo
+                fechaPareada.setDate(fecha.getDate() - 1); // Sábado anterior
+            }
+            
+            const año = fechaPareada.getFullYear();
+            const mes = String(fechaPareada.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaPareada.getDate()).padStart(2, '0');
+            
+            return `${año}-${mes}-${dia}`;
+        }
+        
+        // Función para actualizar información del fin de semana
+        function actualizarInfoFinSemana() {
+            const fechaInput = document.getElementById('fecha');
+            const fechaStr = fechaInput.value;
+            const infoDiv = document.getElementById('weekendInfo');
+            
+            if (!fechaStr) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            const [year, month, day] = fechaStr.split('-').map(Number);
+            const fecha = new Date(year, month - 1, day);
+            const diaSemana = fecha.getDay();
+            const fechaPareada = calcularFechaPareada(fechaStr);
+            const fechaPareadaObj = new Date(fechaPareada.replace(/-/g, '/'));
+            
+            if (diaSemana === 6 || diaSemana === 0) {
+                const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const diaActual = dias[diaSemana];
+                const diaPareado = dias[fechaPareadaObj.getDay()];
+                
+                const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long'
+                });
+                
+                const fechaPareadaFormateada = fechaPareadaObj.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long'
+                });
+                
+                infoDiv.innerHTML = `
+                    <strong>📅 Fin de semana completo:</strong><br>
+                    Registrarás guardia para el <strong>${diaActual} ${fechaFormateada}</strong><br>
+                    y también para el <strong>${diaPareado} ${fechaPareadaFormateada}</strong>
+                    <span class="paired-date">2 días</span>
+                `;
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+        
+        function generarCalendario() {
+            const calendarContainer = document.getElementById('simpleCalendar');
+            if (!calendarContainer) return;
+            
+            const primerDia = new Date(añoActual, mesActual, 1);
+            const ultimoDia = new Date(añoActual, mesActual + 1, 0);
+            const diasEnMes = ultimoDia.getDate();
+            const primerDiaSemana = primerDia.getDay();
+            
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            document.getElementById('currentMonth').textContent = `${meses[mesActual]} ${añoActual}`;
+            
+            let html = `
+                <div class="calendar-weekdays">
+                    <div class="weekday">Dom</div>
+                    <div class="weekday">Lun</div>
+                    <div class="weekday">Mar</div>
+                    <div class="weekday">Mié</div>
+                    <div class="weekday">Jue</div>
+                    <div class="weekday">Vie</div>
+                    <div class="weekday">Sáb</div>
+                </div>
+                <div class="calendar-days">
+            `;
+            
+            for (let i = 0; i < primerDiaSemana; i++) {
+                html += `<div class="calendar-day empty"></div>`;
+            }
+            
+            const hoy = new Date();
+            const esHoy = (dia) => {
+                return dia === hoy.getDate() && 
+                       mesActual === hoy.getMonth() && 
+                       añoActual === hoy.getFullYear();
+            };
+            
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const fechaCompleta = new Date(añoActual, mesActual, dia);
+                const diaSemana = fechaCompleta.getDay();
+                const esFinSemana = diaSemana === 0 || diaSemana === 6;
+                
+                const fechaStr = `${añoActual}-${String(mesActual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                const guardiasDia = guardias.filter(g => g.fecha === fechaStr && g.estado !== 'cancelado');
+                const estaOcupado = guardiasDia.length > 0;
+                
+                const claseDia = esHoy(dia) ? 'calendar-day today' : 'calendar-day';
+                const claseFinSemana = esFinSemana ? 'weekend' : '';
+                const claseOcupado = estaOcupado ? 'occupied' : (esFinSemana ? 'available' : '');
+                
+                html += `
+                    <div class="${claseDia} ${claseFinSemana} ${claseOcupado}" data-fecha="${fechaStr}">
+                        <div class="day-number">${dia}</div>
+                        <div class="day-events">
+                `;
+                
+                guardiasDia.slice(0, 2).forEach(guardia => {
+                    html += `
+                        <div class="calendar-event event-${guardia.estado}"
+                             title="${guardia.nombre} - ${guardia.estado}">
+                            ${guardia.nombre.split(' ')[0]}...
+                        </div>
+                    `;
+                });
+                
+                if (guardiasDia.length > 2) {
+                    html += `<div class="calendar-event" style="background: var(--expert-gray);">+${guardiasDia.length - 2} más</div>`;
+                }
+                
+                html += `</div></div>`;
+            }
+            
+            html += `</div>`;
+            calendarContainer.innerHTML = html;
+        }
+        
+        function cambiarMes(direccion) {
+            mesActual += direccion;
+            
+            if (mesActual < 0) {
+                mesActual = 11;
+                añoActual--;
+            } else if (mesActual > 11) {
+                mesActual = 0;
+                añoActual++;
+            }
+            
+            generarCalendario();
+        }
+        
+        function agregarGuardia() {
+            const selectNombre = document.getElementById('nombre');
+            const nombre = selectNombre.value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            const comentarios = document.getElementById('comentarios').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.style.display = 'none';
+            
+            if (!nombre || !telefono || !fecha) {
+                errorMessage.innerHTML = '⚠️ Por favor selecciona tu nombre y completa todos los campos obligatorios';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            const [year, month, day] = fecha.split('-').map(Number);
+            const fechaObj = new Date(year, month - 1, day);
+            const dia = fechaObj.getDay();
+            
+            if (dia !== 6 && dia !== 0) {
+                errorMessage.innerHTML = '⚠️ Solo puedes registrar guardias para sábados o domingos';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            const fechaPareada = calcularFechaPareada(fecha);
+            
+            // Verificar si ya existen guardias para estas fechas (del mismo usuario)
+            const fechasParaVerificar = [fecha, fechaPareada];
+            const guardiasExistentesMismoUsuario = guardias.filter(g => 
+                fechasParaVerificar.includes(g.fecha) && 
+                g.nombre === nombre && 
+                g.estado !== 'cancelado'
+            );
+            
+            if (guardiasExistentesMismoUsuario.length > 0) {
+                const fechasExistentes = guardiasExistentesMismoUsuario.map(g => formatFecha(g.fecha)).join(' y ');
+                errorMessage.innerHTML = `⚠️ Ya tienes guardias registradas para ${fechasExistentes}`;
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Verificar si hay otra persona en las mismas fechas
+            const fechasOcupadasPorOtros = [];
+            let personaAsignada = '';
+            
+            fechasParaVerificar.forEach(fechaStr => {
+                const guardiasExistentes = guardias.filter(g => 
+                    g.fecha === fechaStr && 
+                    g.estado !== 'cancelado' &&
+                    g.nombre !== nombre
+                );
+                
+                if (guardiasExistentes.length > 0) {
+                    fechasOcupadasPorOtros.push(fechaStr);
+                    personaAsignada = guardiasExistentes[0].nombre;
+                }
+            });
+            
+            if (fechasOcupadasPorOtros.length > 0) {
+                const fechaOcupadaFormateada = formatFecha(fechasOcupadasPorOtros[0]);
+                errorMessage.innerHTML = `
+                    ⚠️ <strong>CONFLICTO DE ASIGNACIÓN</strong><br><br>
+                    La fecha <strong>${fechaOcupadaFormateada}</strong> ya está asignada a:<br>
+                    <strong>👤 ${personaAsignada}</strong><br><br>
+                    <small>Cada fin de semana solo puede tener UNA persona asignada.</small>
+                `;
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            const fechaFormateada = formatFecha(fecha);
+            const fechaPareadaFormateada = formatFecha(fechaPareada);
+            
+            if (!confirm(`¿Registrar guardia para el FIN DE SEMANA COMPLETO?\n\n👤 ${nombre}\n📅 ${fechaFormateada}\n📅 ${fechaPareadaFormateada}\n\nSe crearán 2 guardias (una para cada día).`)) {
+                return;
+            }
+            
+            const guardiasACrear = [
+                {
+                    id: 'g_' + Date.now() + '_1',
+                    nombre: nombre,
+                    telefono: telefono,
+                    turno: 'Día completo (24 horas)',
+                    fecha: fecha,
+                    comentarios: comentarios,
+                    estado: 'pendiente',
+                    fechaRegistro: new Date().toISOString(),
+                    finDeSemanaCompleto: true,
+                    fechaPareada: fechaPareada
+                },
+                {
+                    id: 'g_' + Date.now() + '_2',
+                    nombre: nombre,
+                    telefono: telefono,
+                    turno: 'Día completo (24 horas)',
+                    fecha: fechaPareada,
+                    comentarios: comentarios,
+                    estado: 'pendiente',
+                    fechaRegistro: new Date().toISOString(),
+                    finDeSemanaCompleto: true,
+                    fechaPareada: fecha
+                }
+            ];
+            
+            guardias.push(...guardiasACrear);
+            localStorage.setItem('expertCellGuardias', JSON.stringify(guardias));
+            lastSyncData = JSON.stringify(guardias);
+            
+            generarCalendario();
+            mostrarGuardiasUsuario(nombre);
+            limpiarFormulario();
+            
+            alert(`✅ ¡Fin de semana registrado exitosamente!\n\n👤 ${nombre}\nSe crearon 2 guardias:\n📅 ${fechaFormateada}\n📅 ${fechaPareadaFormateada}`);
+        }
+        
+        function limpiarFormulario() {
+            document.getElementById('comentarios').value = '';
+            document.getElementById('weekendInfo').style.display = 'none';
+            document.getElementById('availabilityCheck').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('fecha').focus();
+        }
+        
+        function formatFecha(fechaStr) {
+            const [year, month, day] = fechaStr.split('-').map(Number);
+            const fecha = new Date(year, month - 1, day);
+            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const diaSemana = dias[fecha.getDay()];
+            const opciones = { day: 'numeric', month: 'long' };
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+            
+            return `${diaSemana} ${fechaFormateada}`;
+        }
+        
+        function cargarGuardias() {
+            const datos = localStorage.getItem('expertCellGuardias');
+            guardias = datos ? JSON.parse(datos) : [];
+        }
+        
+        function mostrarGuardiasUsuario(nombre) {
+            if (!nombre) {
+                mostrarMensajeInicial();
+                return;
+            }
+            
+            const guardiasUsuario = guardias.filter(g => g.nombre === nombre);
+            mostrarGuardiasUsuarioLista(nombre, guardiasUsuario);
+        }
+        
+        function mostrarGuardiasUsuarioLista(nombreBuscado, guardiasUsuario) {
+            const userActivityDiv = document.getElementById('userActivity');
+            
+            if (guardiasUsuario.length === 0) {
+                userActivityDiv.innerHTML = `
+                    <div class="no-guardias-message">
+                        <div class="icon">📝</div>
+                        <p><strong>"${nombreBuscado}"</strong> no tiene guardias registradas</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Registra una guardia usando el formulario</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<div class="user-guardias-list">`;
+            
+            // Ordenar por fecha (más recientes primero)
+            guardiasUsuario.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            // Agrupar por fin de semana
+            const guardiasAgrupadas = [];
+            const procesadas = new Set();
+            
+            for (let i = 0; i < guardiasUsuario.length; i++) {
+                if (procesadas.has(i)) continue;
+                
+                const guardia = guardiasUsuario[i];
+                
+                let guardiaPareada = null;
+                for (let j = i + 1; j < guardiasUsuario.length; j++) {
+                    if (!procesadas.has(j) && 
+                        guardiasUsuario[j].nombre === guardia.nombre &&
+                        ((guardiasUsuario[j].fechaPareada === guardia.fecha) || 
+                         (guardia.finDeSemanaCompleto && guardiasUsuario[j].finDeSemanaCompleto))) {
+                        guardiaPareada = guardiasUsuario[j];
+                        procesadas.add(j);
+                        break;
+                    }
+                }
+                
+                procesadas.add(i);
+                guardiasAgrupadas.push({ guardia, guardiaPareada });
+            }
+            
+            // Mostrar guardias agrupadas
+            guardiasAgrupadas.forEach(({ guardia, guardiaPareada }) => {
+                const fecha = new Date(guardia.fecha);
+                const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                let fechasMostrar = fechaFormateada;
+                let claseEstado = guardia.estado;
+                
+                if (guardiaPareada) {
+                    const fecha2 = new Date(guardiaPareada.fecha);
+                    const fechaFormateada2 = fecha2.toLocaleDateString('es-ES', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                    fechasMostrar = `Fin de semana: ${fechaFormateada} y ${fechaFormateada2}`;
+                    
+                    if (guardia.estado === 'cancelado' || guardiaPareada.estado === 'cancelado') {
+                        claseEstado = 'cancelado';
+                    } else if (guardia.estado === 'completado' && guardiaPareada.estado === 'completado') {
+                        claseEstado = 'completado';
+                    } else if (guardia.estado === 'confirmado' || guardiaPareada.estado === 'confirmado') {
+                        claseEstado = 'confirmado';
+                    } else {
+                        claseEstado = 'pendiente';
+                    }
+                }
+                
+                html += `
+                    <div class="user-guardia-item ${claseEstado}">
+                        <div class="guardia-info">
+                            <div class="guardia-fecha">${fechasMostrar}</div>
+                            ${guardia.comentarios ? `<div class="guardia-observaciones">${guardia.comentarios}</div>` : ''}
+                        </div>
+                        <span class="guardia-estado estado-${claseEstado}">
+                            ${claseEstado} ${guardiaPareada ? '🏁' : ''}
+                        </span>
+                    </div>
+                `;
+            });
+            
+            const total = guardiasUsuario.length;
+            const completadas = guardiasUsuario.filter(g => g.estado === 'completado').length;
+            
+            html += `
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; text-align: center;">
+                    <div style="display: inline-block; margin: 0 15px;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--expert-blue);">${total}</div>
+                        <div style="font-size: 0.8rem; color: var(--expert-gray);">Total días</div>
+                    </div>
+                    <div style="display: inline-block; margin: 0 15px;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--expert-blue);">${Math.ceil(total / 2)}</div>
+                        <div style="font-size: 0.8rem; color: var(--expert-gray);">Fines de semana</div>
+                    </div>
+                    <div style="display: inline-block; margin: 0 15px;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--expert-blue);">${completadas}</div>
+                        <div style="font-size: 0.8rem; color: var(--expert-gray);">Completadas</div>
+                    </div>
+                </div>
+            `;
+            
+            userActivityDiv.innerHTML = html;
+        }
+        
+        function mostrarMensajeInicial() {
+            const userActivityDiv = document.getElementById('userActivity');
+            userActivityDiv.innerHTML = `
+                <div class="no-guardias-message">
+                    <div class="icon">👤</div>
+                    <p>Selecciona tu nombre en el formulario para ver tus guardias</p>
+                </div>
+            `;
+        }
+        
+        // Función para agregar datos de ejemplo (solo para pruebas)
+        function agregarDatosEjemploUsuario() {
+            const hoy = new Date();
+            const año = hoy.getFullYear();
+            const mes = hoy.getMonth() + 1;
+            const mesStr = String(mes).padStart(2, '0');
+            
+            let proximoSabado = new Date(hoy);
+            while (proximoSabado.getDay() !== 6) {
+                proximoSabado.setDate(proximoSabado.getDate() + 1);
+            }
+            
+            const diaSabado = String(proximoSabado.getDate()).padStart(2, '0');
+            const domingo = new Date(proximoSabado);
+            domingo.setDate(domingo.getDate() + 1);
+            const diaDomingo = String(domingo.getDate()).padStart(2, '0');
+            
+            const ejemplos = [
+                {
+                    id: 'ej_user_1',
+                    nombre: 'Luis Alejandro Cervantes',
+                    telefono: '222 772 5899',
+                    turno: 'Día completo (24 horas)',
+                    fecha: `${año}-${mesStr}-${diaSabado}`,
+                    comentarios: 'Guardia regular fin de semana',
+                    estado: 'pendiente',
+                    fechaRegistro: new Date().toISOString(),
+                    finDeSemanaCompleto: true,
+                    fechaPareada: `${año}-${mesStr}-${diaDomingo}`
+                },
+                {
+                    id: 'ej_user_2',
+                    nombre: 'Luis Alejandro Cervantes',
+                    telefono: '222 772 5899',
+                    turno: 'Día completo (24 horas)',
+                    fecha: `${año}-${mesStr}-${diaDomingo}`,
+                    comentarios: 'Guardia regular fin de semana',
+                    estado: 'pendiente',
+                    fechaRegistro: new Date().toISOString(),
+                    finDeSemanaCompleto: true,
+                    fechaPareada: `${año}-${mesStr}-${diaSabado}`
+                }
+            ];
+            
+            guardias = [...guardias, ...ejemplos];
+            localStorage.setItem('expertCellGuardias', JSON.stringify(guardias));
+            lastSyncData = JSON.stringify(guardias);
+            generarCalendario();
+            
+            // Actualizar vista si este usuario está seleccionado
+            if (usuarioSeleccionado === 'Luis Alejandro Cervantes') {
+                mostrarGuardiasUsuario(usuarioSeleccionado);
+            }
+            
+            alert('✅ Datos de ejemplo agregados para Luis Alejandro Cervantes');
+        }
+        
+        // Para pruebas desde consola
+        window.agregarDatosEjemploUsuario = agregarDatosEjemploUsuario;
+    </script>
+</body>
+</html>

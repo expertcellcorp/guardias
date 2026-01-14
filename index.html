@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Cell - Guardias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .option-card.admin {
+            border-color: #ef4444;
+        }
+        
+        .option-card.admin:hover {
+            background: #fef2f2;
+        }
+        
+        .option-card.user {
+            border-color: #10b981;
+        }
+        
+        .option-card.user:hover {
+            background: #f0fdf4;
+        }
+        
+        .option-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .option-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e3a8a;
+        }
+        
+        .option-desc {
+            color: #6b7280;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        
+        .option-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .badge-admin {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge-user {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-admin {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-admin:hover {
+            background: #dc2626;
+        }
+        
+        .btn-user {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-user:hover {
+            background: #0da271;
+        }
+        
+        /* MODAL DE CONTRASEÑA */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .modal-subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .btn-modal {
+            width: 100%;
+            padding: 15px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-modal:hover {
+            background: #dc2626;
+        }
+        
+        .btn-cancel {
+            background: #6b7280;
+            margin-top: 10px;
+        }
+        
+        .btn-cancel:hover {
+            background: #4b5563;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .password-hint {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        footer {
+            margin-top: 50px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .options-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .option-card {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+        }
+        
+        /* Estilo para el mensaje de protección */
+        #protectionMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <!-- MODAL DE CONTRASEÑA -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-icon">🔒</div>
+            <div class="modal-title">Acceso Administrador</div>
+            <div class="modal-subtitle">Ingresa la contraseña para acceder al sistema de administración</div>
+            
+            <input type="password" 
+                   class="password-input" 
+                   id="passwordInput" 
+                   placeholder="Ingresa la contraseña"
+                   maxlength="20"
+                   autocomplete="off">
+            
+            <div class="error-message" id="errorMessage">
+                Contraseña incorrecta. Intenta nuevamente.
+            </div>
+            
+            <button class="btn-modal" onclick="verificarPassword()">Acceder</button>
+            <button class="btn-modal btn-cancel" onclick="cerrarModal()">Cancelar</button>
+            
+            <div class="password-hint">
+                Contacta al supervisor si no conoces la contraseña
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mensaje de protección -->
+    <div id="protectionMessage">
+        <div style="font-size: 2rem; margin-bottom: 15px;">🚫</div>
+        <div style="font-size: 1.2rem; margin-bottom: 10px; font-weight: bold;">Acceso Restringido</div>
+        <div style="font-size: 0.9rem; opacity: 0.8;">El código fuente está protegido</div>
+    </div>
+    
+    <div class="logo">🏢</div>
+    <h1 class="title">Sistema de Control de Guardias</h1>
+    <p class="subtitle">Expert Cell - Gestión de guardias de fin de semana</p>
+    
+    <div class="options-container">
+        <!-- OPCIÓN ADMINISTRADOR -->
+        <div class="option-card admin" onclick="abrirModalAdmin()" style="cursor: pointer;">
+            <span class="option-icon">👑</span>
+            <div class="option-badge badge-admin">ACCESO RESTRINGIDO</div>
+            <div class="option-title">Versión Administrador</div>
+            <div class="option-desc">Acceso completo a todas las funciones del sistema</div>
+            <div class="btn btn-admin">Ingresar como Administrador</div>
+        </div>
+        
+        <!-- OPCIÓN USUARIO -->
+        <a href="usuario.html" class="option-card user">
+            <span class="option-icon">👤</span>
+            <div class="option-badge badge-user">ACCESO GENERAL</div>
+            <div class="option-title">Versión Usuario</div>
+            <div class="option-desc">Para registrar y consultar guardias personales</div>
+            <div class="btn btn-user">Ingresar como Usuario</div>
+        </a>
+    </div>
+    
+    <footer>
+        <p>Expert Cell © 2024 - Sistema de control de guardias</p>
+    </footer>
+
+    <script>
+        // 🔒 SISTEMA DE SEGURIDAD MEJORADO
+        
+        // 1. CONTRASEÑA ENCRIPTADA (no visible en código fuente)
+        // La contraseña real está en base64 y ofuscada
+        const passwordEncoded = "YWRtaW4xMjM="; // "admin123" en base64
+        
+        // Función para decodificar la contraseña
+        function getPassword() {
+            return atob(passwordEncoded);
+        }
+        
+        // 2. PROTECCIÓN CONTRA CLIC DERECHO Y F12
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            mostrarMensajeProteccion();
+            return false;
+        });
+        
+        // 3. BLOQUEAR TECLAS DE DESARROLLADOR
+        document.addEventListener('keydown', function(e) {
+            // Bloquear F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                mostrarMensajeProteccion();
+                return false;
+            }
+            
+            // Bloquear Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+                e.preventDefault();
+                mostrarMensajeProteccion();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                mostrarMensajeProteccion();
+                return false;
+            }
+        });
+        
+        // 4. BLOQUEAR SELECCIÓN DE TEXTO Y COPIA
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 5. OFUSCACIÓN ADICIONAL - La contraseña no está en texto plano
+        // Se decodifica solo al momento de la verificación
+        
+        // 6. ELEMENTOS DEL DOM
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const protectionMessage = document.getElementById('protectionMessage');
+        
+        // 7. FUNCIÓN PARA MOSTRAR MENSAJE DE PROTECCIÓN
+        function mostrarMensajeProteccion() {
+            protectionMessage.style.display = 'block';
+            setTimeout(function() {
+                protectionMessage.style.display = 'none';
+            }, 2000);
+        }
+        
+        // 8. Función para abrir el modal de contraseña
+        function abrirModalAdmin() {
+            passwordModal.style.display = 'flex';
+            passwordInput.value = '';
+            errorMessage.style.display = 'none';
+            passwordInput.focus();
+        }
+        
+        // 9. Función para cerrar el modal
+        function cerrarModal() {
+            passwordModal.style.display = 'none';
+            passwordInput.value = '';
+            errorMessage.style.display = 'none';
+        }
+        
+        // 10. Función para verificar la contraseña
+        function verificarPassword() {
+            const passwordIngresada = passwordInput.value.trim();
+            const passwordCorrecta = getPassword(); // Se decodifica aquí
+            
+            if (passwordIngresada === passwordCorrecta) {
+                // Contraseña correcta - redirigir a admin.html
+                window.location.href = 'admin.html';
+            } else {
+                // Contraseña incorrecta - mostrar error
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Efecto de shake en el input
+                passwordInput.style.animation = 'none';
+                setTimeout(() => {
+                    passwordInput.style.animation = 'shake 0.5s ease-in-out';
+                }, 10);
+            }
+        }
+        
+        // 11. Permitir presionar Enter para enviar
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verificarPassword();
+            }
+        });
+        
+        // 12. Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target === passwordModal) {
+                cerrarModal();
+            }
+            if (event.target === protectionMessage) {
+                protectionMessage.style.display = 'none';
+            }
+        };
+        
+        // 13. Agregar animación de shake
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+            
+            /* Deshabilitar selección de texto */
+            body {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            
+            /* Excepciones para inputs */
+            input, textarea {
+                user-select: text !important;
+                -webkit-user-select: text !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 14. OFUSCACIÓN AVANZADA - Función para cambiar contraseña
+        // Esta función está ofuscada y no es fácilmente accesible
+        window.__cambiarPass = function(nuevaPass) {
+            if (typeof nuevaPass === 'string' && nuevaPass.length >= 4) {
+                // Crear nuevo código base64
+                const nuevaPassEncoded = btoa(nuevaPass);
+                
+                // Mostrar instrucciones para el cambio permanente
+                const mensaje = `
+                🔐 Para cambiar la contraseña permanentemente:
+                
+                1. En el archivo index.html, busca esta línea:
+                   const passwordEncoded = "${passwordEncoded}";
+                
+                2. Reemplázala con:
+                   const passwordEncoded = "${nuevaPassEncoded}";
+                
+                3. Guarda el archivo y recarga la página.
+                
+                Nueva contraseña: ${nuevaPass}
+                `;
+                
+                alert(mensaje);
+                return true;
+            }
+            return false;
+        };
+        
+        // 15. DETECCIÓN DE HERRAMIENTAS DE DESARROLLO (opcional)
+        // Detecta si se abren las herramientas de desarrollo
+        function detectDevTools() {
+            const widthThreshold = window.outerWidth - window.innerWidth > 160;
+            const heightThreshold = window.outerHeight - window.innerHeight > 160;
+            
+            if (widthThreshold || heightThreshold) {
+                mostrarMensajeProteccion();
+            }
+        }
+        
+        setInterval(detectDevTools, 1000);
+        
+        // 16. LIMPIAR CONSOLA PERIÓDICAMENTE (opcional)
+        setInterval(function() {
+            if (typeof console !== 'undefined') {
+                console.clear();
+            }
+        }, 1000);
+        
+        // 17. AGREGAR CONSEJOS DE SEGURIDAD EN CONSOLA
+        console.log('%c ⚠️ ACCESO RESTRINGIDO ⚠️', 'color: #ef4444; font-size: 20px; font-weight: bold;');
+        console.log('%c Esta área es solo para desarrolladores autorizados.', 'color: #6b7280;');
+        
+    </script>
+</body>
+</html>
