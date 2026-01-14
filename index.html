@@ -379,8 +379,7 @@
     </footer>
 
     <script>
-        // 🔒 SISTEMA DE SEGURIDAD MEJORADO
-        
+            
         const passwordEncoded = "R1FAZG1pbi4uMjAyNg=="; 
         
         function getPassword() {
@@ -457,7 +456,7 @@
         
         function verificarPassword() {
             const passwordIngresada = passwordInput.value.trim();
-            const passwordCorrecta = getPassword(); // Se decodifica aquí
+            const passwordCorrecta = getPassword(); 
             
             if (passwordIngresada === passwordCorrecta) {
                 // Contraseña correcta - redirigir a admin.html
@@ -476,14 +475,14 @@
             }
         }
         
-        // 11. Permitir presionar Enter para enviar
+        // Permitir presionar Enter para enviar
         passwordInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 verificarPassword();
             }
         });
         
-        // 12. Cerrar modal al hacer clic fuera
+        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             if (event.target === passwordModal) {
                 cerrarModal();
@@ -493,7 +492,7 @@
             }
         };
         
-        // 13. Agregar animación de shake
+        // Agregar animación de shake
         const style = document.createElement('style');
         style.textContent = `
             @keyframes shake {
